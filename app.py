@@ -30,9 +30,41 @@ def begin_survey ():
 
 @app.get("/questions/<int:question_num>")
 
-def test (question_num):
+def show_question (question_num):
+    """Loads a survey question"""
     question = survey.questions[question_num]
     prompt = question.prompt
     choices = question.choices
-    return render_template ("question.html", prompt = prompt, choices = choices)
+    return render_template (
+        "question.html", 
+        prompt = prompt, 
+        choices = choices, 
+        question_num = question_num)
 
+
+@app.post('/answer')
+
+def handle_question_submission ():
+    """Appends submission data to responses and redirects to next questioin"""
+    responses.append(request.form["answer"])
+
+    question_num = int(request.form["question_num"]) + 1
+    print(responses)
+
+    if question_num >= len(survey.questions):
+        return redirect ("/thank-you")
+
+    return redirect (f"/questions/{question_num}")
+
+
+@app.get('/thank-you')
+
+def show_thank_you ():
+    """Shows a thank you page with list of answers"""
+    
+    return render_template (
+        "completion.html",
+        questions_length = len(survey.questions),
+        questions = survey.questions,
+        responses = responses
+    )
