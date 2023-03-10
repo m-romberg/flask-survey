@@ -29,6 +29,13 @@ def show_question (question_num):
     """Loads a survey question"""
     question = survey.questions[question_num]
 
+    responses = session['responses']
+    if question_num > len(responses):
+        return redirect (f"/questions/{len(responses)}")
+    
+    if len(survey.questions) == len(responses):
+        return redirect('/thank-you')
+
     return render_template (
         "question.html",
         question = question,
