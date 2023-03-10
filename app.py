@@ -12,7 +12,6 @@ debug = DebugToolbarExtension(app)
 responses = []
 
 @app.get('/')
-
 def start_page ():
     """Loads Survey Opening"""
 
@@ -20,30 +19,27 @@ def start_page ():
     instructions = survey.instructions
     print ("title ", title , "inst", instructions)
     return render_template(
-        "survey_start.html", title = title, instructions = instructions)
+        "survey_start.html", survey = survey) 
 
 @app.post("/begin")
-
 def begin_survey ():
     """Directs user to question 0 on start click"""
+    responses.clear()
     return redirect ("/questions/0")
 
 @app.get("/questions/<int:question_num>")
-
 def show_question (question_num):
     """Loads a survey question"""
     question = survey.questions[question_num]
-    prompt = question.prompt
-    choices = question.choices
+    # prompt = question.prompt
+    # choices = question.choices
     return render_template (
         "question.html", 
-        prompt = prompt, 
-        choices = choices, 
+        question = question,
         question_num = question_num)
 
 
 @app.post('/answer')
-
 def handle_question_submission ():
     """Appends submission data to responses and redirects to next questioin"""
     responses.append(request.form["answer"])
@@ -58,7 +54,6 @@ def handle_question_submission ():
 
 
 @app.get('/thank-you')
-
 def show_thank_you ():
     """Shows a thank you page with list of answers"""
     
